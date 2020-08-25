@@ -1,8 +1,6 @@
 <?php
 
-
 namespace JonFackrell\Eds\Tests;
-
 
 use Illuminate\Support\Facades\Http;
 use JonFackrell\Eds\Eds;
@@ -10,27 +8,24 @@ use Orchestra\Testbench\TestCase;
 
 class EdsTest extends TestCase
 {
-
-
     public function it_can_request_auth_token()
     {
         Http::fake();
 
         Http::withHeaders([
-            'Content-Type' => 'application/json'
-        ])->post('https://eds-api.ebscohost.com/' . 'authservice/rest/UIDAuth', [
+            'Content-Type' => 'application/json',
+        ])->post('https://eds-api.ebscohost.com/'.'authservice/rest/UIDAuth', [
             'UserId' => env('EDS_USERID'),
             'Password' => env('EDS_PASSWORD'),
         ]);
 
         Http::assertSent(function ($request) {
             return $request->hasHeader('Content-Type', 'application/json') &&
-                   $request->url() == 'https://eds-api.ebscohost.com/' . 'authservice/rest/UIDAuth' &&
+                   $request->url() == 'https://eds-api.ebscohost.com/'.'authservice/rest/UIDAuth' &&
                    $request['UserId'] == env('EDS_USERID') &&
                    $request['Password'] == env('EDS_PASSWORD');
         });
     }
-
 
     public function it_can_request_session_token()
     {
@@ -38,16 +33,16 @@ class EdsTest extends TestCase
 
         Http::withHeaders([
             'Content-Type' => 'application/json',
-            'x-authenticationToken' => 'AuthToken'
-        ])->post('https://eds-api.ebscohost.com/' . 'edsapi/rest/createsession', [
+            'x-authenticationToken' => 'AuthToken',
+        ])->post('https://eds-api.ebscohost.com/'.'edsapi/rest/createsession', [
             'Profile' => env('EDS_PROFILE'),
-            'Org' => env('EDS_ORG')
+            'Org' => env('EDS_ORG'),
         ]);
 
         Http::assertSent(function ($request) {
             return $request->hasHeader('Content-Type', 'application/json') &&
                    $request->hasHeader('x-authenticationToken', 'AuthToken') &&
-                   $request->url() == 'https://eds-api.ebscohost.com/' . 'edsapi/rest/createsession' &&
+                   $request->url() == 'https://eds-api.ebscohost.com/'.'edsapi/rest/createsession' &&
                    $request['Profile'] == env('EDS_PROFILE') &&
                    $request['Org'] == env('EDS_ORG');
         });

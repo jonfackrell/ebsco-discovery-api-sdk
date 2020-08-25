@@ -1,6 +1,5 @@
 <?php
 
-
 namespace JonFackrell\Eds;
 
 use Illuminate\Support\Facades\Http;
@@ -35,10 +34,10 @@ class Eds
 
     public function retrieve($id)
     {
-        list($database, $an) = explode('|', $id);
+        [$database, $an] = explode('|', $id);
 
         $response = Http::withHeaders($this->headers)->post(
-            $this->baseUri . 'edsapi/rest/Retrieve',
+            $this->baseUri.'edsapi/rest/Retrieve',
             [
                 'DbId' => $database,
                 'An' => $an,
@@ -51,8 +50,9 @@ class Eds
         } elseif ($response->status() == 400) {
             session()->forget('session_token');
             $this->getSessionToken();
+
             return $this->retrieve($id);
-        } else{
+        } else {
             return;
         }
     }
@@ -65,16 +65,16 @@ class Eds
             $authToken = $index->auth_token;
             $authTimeout = $index->auth_token_expires_at;
         } else {*/
-            $response = Http::withHeaders($this->headers)->post($this->baseUri . 'authservice/rest/UIDAuth', [
-                'UserId' => $this->userid,
-                'Password' => $this->password,
-            ]);
-            $authToken = $response->json()['AuthToken'];
-            $authTimeout = $response->json()['AuthTimeout'];
-            /*$index->update([
-                'auth_token' => $authToken,
-                'auth_token_expires_at' => now()->addSeconds($authTimeout),
-            ]);*/
+        $response = Http::withHeaders($this->headers)->post($this->baseUri.'authservice/rest/UIDAuth', [
+            'UserId' => $this->userid,
+            'Password' => $this->password,
+        ]);
+        $authToken = $response->json()['AuthToken'];
+        $authTimeout = $response->json()['AuthTimeout'];
+        /*$index->update([
+            'auth_token' => $authToken,
+            'auth_token_expires_at' => now()->addSeconds($authTimeout),
+        ]);*/
         /*}*/
 
         $this->authToken = $authToken;
@@ -87,9 +87,9 @@ class Eds
         if (session('session_token')) {
             $sessionToken = session('session_token');
         } else {
-            $response = Http::withHeaders($this->headers)->post($this->baseUri . 'edsapi/rest/createsession', [
+            $response = Http::withHeaders($this->headers)->post($this->baseUri.'edsapi/rest/createsession', [
                 'Profile' => $this->profile,
-                'Org' => $this->org
+                'Org' => $this->org,
             ]);
 
             if ($response->ok()) {
