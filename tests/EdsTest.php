@@ -9,7 +9,6 @@ use Orchestra\Testbench\TestCase;
 
 class EdsTest extends TestCase
 {
-
     protected function getEnvironmentSetUp($app)
     {
         include_once __DIR__.'/../database/migrations/create_eds_api_table.php.stub';

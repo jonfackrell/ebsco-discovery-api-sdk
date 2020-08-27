@@ -1,8 +1,6 @@
 <?php
 
-
 namespace JonFackrell\Eds\Facades;
-
 
 use Illuminate\Support\Facades\Facade;
 
