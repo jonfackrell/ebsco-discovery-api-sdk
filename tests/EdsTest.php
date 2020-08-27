@@ -4,10 +4,19 @@ namespace JonFackrell\Eds\Tests;
 
 use Illuminate\Support\Facades\Http;
 use JonFackrell\Eds\Eds;
+use JonFackrell\Eds\Models\EdsApi;
 use Orchestra\Testbench\TestCase;
 
 class EdsTest extends TestCase
 {
+
+    protected function getEnvironmentSetUp($app)
+    {
+        include_once __DIR__.'/../database/migrations/create_eds_api_table.php.stub';
+
+        (new \CreateEdsApiTable)->up();
+    }
+
     public function it_can_request_auth_token()
     {
         Http::fake();
@@ -113,5 +122,17 @@ class EdsTest extends TestCase
         $eds = new Eds();
 
         $this->assertNotEmpty($eds->retrieve('TestDatabase|TestAn'));
+    }
+
+    /** @test */
+    public function it_can_access_the_database()
+    {
+        $api = new EdsApi();
+        $api->auth_token = 'randomstring';
+        $api->save();
+
+        $newApi = EdsApi::find($api->id);
+
+        $this->assertSame($newApi->auth_token, 'randomstring');
     }
 }

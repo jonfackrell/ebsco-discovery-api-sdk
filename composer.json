@@ -33,5 +33,15 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JonFackrell\\Eds\\EbscoDiscoveryApiServiceProvider"
+            ],
+            "aliases": {
+                "EDS": "JonFackrell\\Eds\\Facades\\EbscoDiscovery"
+            }
+        }
     }
 }
