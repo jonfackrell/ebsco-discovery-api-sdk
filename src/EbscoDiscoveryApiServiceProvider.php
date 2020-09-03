@@ -17,7 +17,7 @@ class EbscoDiscoveryApiServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->bind('eds', function () {
+        $this->app->bind('ebsco-discovery', function () {
             return new Eds();
         });
     }

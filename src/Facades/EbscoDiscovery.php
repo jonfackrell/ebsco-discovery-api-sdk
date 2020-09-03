@@ -8,6 +8,6 @@ class EbscoDiscovery extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'eds';
+        return 'ebsco-discovery';
     }
 }
