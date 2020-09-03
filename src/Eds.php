@@ -34,7 +34,6 @@ class Eds
 
     public function search($options)
     {
-
     }
 
     public function retrieve($id)
