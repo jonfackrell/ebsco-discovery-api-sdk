@@ -32,6 +32,11 @@ class Eds
         $this->getSessionToken();
     }
 
+    public function search($options)
+    {
+
+    }
+
     public function retrieve($id)
     {
         [$database, $an] = explode('|', $id);
@@ -55,6 +60,21 @@ class Eds
         } else {
             return;
         }
+    }
+
+    public function info()
+    {
+        // TODO
+    }
+
+    public function citations($database, $an, $styles = null)
+    {
+        // TODO
+    }
+
+    public function export($database, $an, $format = ['ris'])
+    {
+        // TODO
     }
 
     private function getAuthToken()
