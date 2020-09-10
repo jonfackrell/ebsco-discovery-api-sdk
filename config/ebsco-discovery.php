@@ -2,12 +2,18 @@
 
 return [
 
-    'USERID' => env('EDS_USERID'),
+    'userid' => env('EDS_USERID'),
 
-    'EDS_PASSWORD' => env('EDS_PASSWORD'),
+    'eds_password' => env('EDS_PASSWORD'),
 
-    'EDS_PROFILE' => env('EDS_PROFILE'),
+    'eds_profile' => env('EDS_PROFILE'),
 
-    'EDS_ORG' => env('EDS_ORG'),
+    'eds_org' => env('EDS_ORG'),
+
+    'citation_styles' => [
+        'apa',
+        'mla',
+        'turabian',
+    ],
 
 ];

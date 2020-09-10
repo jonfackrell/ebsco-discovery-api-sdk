@@ -3,6 +3,7 @@
 namespace JonFackrell\Eds;
 
 use Illuminate\Support\Facades\Http;
+use JonFackrell\Eds\Models\EdsApi;
 
 class Eds
 {
@@ -63,38 +64,89 @@ class Eds
 
     public function info()
     {
-        // TODO
+        $response = Http::withHeaders($this->headers)->get($this->baseUri . 'edsapi/rest/Info');
+
+        if ($response->ok()) {
+            //return $response->json();
+            $index = EdsApi::first();
+            $index->info = $response->json();
+            $index->save();
+            return $index->info;
+        } elseif ($response->status() == 400) {
+            session()->forget('session_token');
+            $this->getSessionToken();
+            return $this->info();
+        } else {
+            return null;
+        }
     }
 
-    public function citations($database, $an, $styles = null)
+    public function citations($database, $an, $styles = [])
     {
-        // TODO
+        if (empty($styles)) {
+            $styles = config('ebsco-discovery.citation_styles');
+        }
+
+        $response = Http::withHeaders($this->headers)->get(
+            $this->baseUri . 'edsapi/rest/CitationStyles',
+            [
+                'dbid' => $database,
+                'an' => $an,
+                'styles' => implode(',', $styles),
+            ]
+        );
+
+        if ($response->ok()) {
+            return $response->json()['Citations'];
+        } elseif ($response->status() == 400) {
+            session()->forget('session_token');
+            $this->getSessionToken();
+            return $this->citations($database, $an, $styles);
+        } else {
+            return null;
+        }
     }
 
     public function export($database, $an, $format = ['ris'])
     {
-        // TODO
+        $response = Http::withHeaders($this->headers)->get(
+            $this->baseUri . 'edsapi/rest/ExportFormat',
+            [
+                'dbid' => $database,
+                'an' => $an,
+                'format' => implode(',', $format),
+            ]
+        );
+
+        if ($response->ok()) {
+            return $response->json();
+        } elseif ($response->status() == 400) {
+            session()->forget('session_token');
+            $this->getSessionToken();
+            return $this->export($database, $an, $format);
+        } else {
+            return null;
+        }
     }
 
     private function getAuthToken()
     {
-        // Need to fix this
-        /*$index = Index::where('name', 'EDS')->first();
+        $index = EdsApi::first();
         if ($index->auth_token_expires_at > now()) {
             $authToken = $index->auth_token;
             $authTimeout = $index->auth_token_expires_at;
-        } else {*/
-        $response = Http::withHeaders($this->headers)->post($this->baseUri.'authservice/rest/UIDAuth', [
-            'UserId' => $this->userid,
-            'Password' => $this->password,
-        ]);
-        $authToken = $response->json()['AuthToken'];
-        $authTimeout = $response->json()['AuthTimeout'];
-        /*$index->update([
-            'auth_token' => $authToken,
-            'auth_token_expires_at' => now()->addSeconds($authTimeout),
-        ]);*/
-        /*}*/
+        } else {
+            $response = Http::withHeaders($this->headers)->post($this->baseUri.'authservice/rest/UIDAuth', [
+                'UserId' => $this->userid,
+                'Password' => $this->password,
+            ]);
+            $authToken = $response->json()['AuthToken'];
+            $authTimeout = $response->json()['AuthTimeout'];
+            $index->update([
+                'auth_token' => $authToken,
+                'auth_token_expires_at' => now()->addSeconds($authTimeout),
+            ]);
+        }
 
         $this->authToken = $authToken;
         $this->authTimeout = $authTimeout;
