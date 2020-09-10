@@ -64,17 +64,19 @@ class Eds
 
     public function info()
     {
-        $response = Http::withHeaders($this->headers)->get($this->baseUri . 'edsapi/rest/Info');
+        $response = Http::withHeaders($this->headers)->get($this->baseUri.'edsapi/rest/Info');
 
         if ($response->ok()) {
             //return $response->json();
             $index = EdsApi::first();
             $index->info = $response->json();
             $index->save();
+
             return $index->info;
         } elseif ($response->status() == 400) {
             session()->forget('session_token');
             $this->getSessionToken();
+
             return $this->info();
         } else {
             return null;
@@ -88,7 +90,7 @@ class Eds
         }
 
         $response = Http::withHeaders($this->headers)->get(
-            $this->baseUri . 'edsapi/rest/CitationStyles',
+            $this->baseUri.'edsapi/rest/CitationStyles',
             [
                 'dbid' => $database,
                 'an' => $an,
@@ -101,6 +103,7 @@ class Eds
         } elseif ($response->status() == 400) {
             session()->forget('session_token');
             $this->getSessionToken();
+
             return $this->citations($database, $an, $styles);
         } else {
             return null;
@@ -110,7 +113,7 @@ class Eds
     public function export($database, $an, $format = ['ris'])
     {
         $response = Http::withHeaders($this->headers)->get(
-            $this->baseUri . 'edsapi/rest/ExportFormat',
+            $this->baseUri.'edsapi/rest/ExportFormat',
             [
                 'dbid' => $database,
                 'an' => $an,
@@ -123,6 +126,7 @@ class Eds
         } elseif ($response->status() == 400) {
             session()->forget('session_token');
             $this->getSessionToken();
+
             return $this->export($database, $an, $format);
         } else {
             return null;
